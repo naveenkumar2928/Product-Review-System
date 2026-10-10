@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | ReviewHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-page">
+
+    <nav class="navbar">
+        <a href="{{ url_for('dashboard') }}" class="brand">⭐ ReviewHub</a>
+        <div class="nav-links">
+            <span class="welcome-user">Hi, {{ session['username'] }}!</span>
+            <a href="{{ url_for('add_review') }}">Add Review</a>
+            <a href="{{ url_for('reviews') }}">See Reviews</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
+        </div>
+    </nav>
+
+    <main class="dashboard">
+        <section class="dashboard-heading">
+            <div>
+                <span class="eyebrow">YOUR REVIEW SPACE</span>
+                <h1>Dashboard Overview 📊</h1>
+                <p>Track product ratings and explore what people think.</p>
+            </div>
+            <a href="{{ url_for('add_review') }}" class="btn btn-primary">
+                + Write a Review
+            </a>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="stat-grid">
+            <div class="stat-card stat-purple">
+                <div class="stat-icon">💬</div>
+                <p>Total Reviews</p>
+                <h2>{{ total_reviews }}</h2>
+                <span>Reviews shared by users</span>
+            </div>
+
+            <div class="stat-card stat-blue">
+                <div class="stat-icon">🛍️</div>
+                <p>Products Reviewed</p>
+                <h2>{{ total_products }}</h2>
+                <span>Different products rated</span>
+            </div>
+
+            <div class="stat-card stat-pink">
+                <div class="stat-icon">⭐</div>
+                <p>Average Rating</p>
+                <h2>{{ average_rating }} / 5</h2>
+                <span>Across all reviews</span>
+            </div>
+        </section>
+
+        <section class="chart-grid">
+            <div class="panel chart-panel">
+                <h2>Product Rating Overview</h2>
+                <p class="panel-subtitle">Average rating for each product</p>
+                <div class="chart-container">
+                    <canvas id="productChart"></canvas>
+                </div>
+            </div>
+
+            <div class="panel chart-panel">
+                <h2>Rating Distribution</h2>
+                <p class="panel-subtitle">Number of reviews for each star rating</p>
+                <div class="chart-container doughnut-container">
+                    <canvas id="ratingChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel product-panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Product Insights</h2>
+                    <p class="panel-subtitle">Ratings and review counts</p>
+                </div>
+                <a href="{{ url_for('reviews') }}">View All Reviews →</a>
+            </div>
+
+            {% if product_stats %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Total Reviews</th>
+                                <th>Average Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in product_stats %}
+                                <tr>
+                                    <td>{{ product['product_name'] }}</td>
+                                    <td>{{ product['review_count'] }}</td>
+                                    <td class="rating-text">
+                                        ⭐ {{ product['average_rating'] }} / 5
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <span>📝</span>
+                    <h3>No reviews yet!</h3>
+                    <p>Add the first review to see your dashboard statistics.</p>
+                    <a href="{{ url_for('add_review') }}" class="btn btn-primary">
+                        Add First Review
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="panel recent-panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Recent Reviews</h2>
+                    <p class="panel-subtitle">Latest feedback from users</p>
+                </div>
+                <a href="{{ url_for('reviews') }}">See All →</a>
+            </div>
+
+            {% if recent_reviews %}
+                <div class="recent-review-list">
+                    {% for review in recent_reviews %}
+                        <article class="recent-review">
+                            <div class="review-avatar">
+                                {{ review['username'][0]|upper }}
+                            </div>
+                            <div class="recent-review-content">
+                                <h3>{{ review['product_name'] }}</h3>
+                                <p>{{ review['review_text'] }}</p>
+                                <span>By {{ review['username'] }}</span>
+                            </div>
+                            <div class="recent-rating">
+                                {{ '★' * review['rating'] }}{{ '☆' * (5 - review['rating']) }}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-message">Your recent reviews will appear here.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 ReviewHub | Product Review System</p>
+    </footer>
+
+    <script>
+        const productLabels = [
+            {% for product in product_stats %}
+                {{ product['product_name']|tojson }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        const productRatings = [
+            {% for product in product_stats %}
+                {{ product['average_rating'] or 0 }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        new Chart(document.getElementById('productChart'), {
+            type: 'bar',
+            data: {
+                labels: productLabels,
+                datasets: [{
+                    label: 'Average Rating',
+                    data: productRatings,
+                    backgroundColor: ['#8b5cf6', '#38bdf8', '#f472b6'],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: { stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        const ratingCounts = [0, 0, 0, 0, 0];
+
+        {% for item in rating_counts %}
+            ratingCounts[{{ item['rating'] - 1 }}] = {{ item['total'] }};
+        {% endfor %}
+
+        new Chart(document.getElementById('ratingChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+                datasets: [{
+                    data: ratingCounts,
+                    backgroundColor: [
+                        '#fb7185',
+                        '#fb923c',
+                        '#facc15',
+                        '#38bdf8',
+                        '#8b5cf6'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Reviews | ReviewHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-page">
+
+    <nav class="navbar">
+        <a href="{{ url_for('dashboard') }}" class="brand">⭐ ReviewHub</a>
+
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('add_review') }}">Add Review</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
+        </div>
+    </nav>
+
+    <main class="dashboard">
+        <section class="dashboard-heading">
+            <div>
+                <span class="eyebrow">COMMUNITY FEEDBACK</span>
+                <h1>Explore Reviews 💬</h1>
+                <p>Discover what other users think about different products.</p>
+            </div>
+
+            <a href="{{ url_for('add_review') }}" class="btn btn-primary">
+                + Write a Review
+            </a>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="reviews-grid">
+            {% if reviews %}
+                {% for review in reviews %}
+                    <article class="review-card">
+                        <div class="review-card-top">
+                            <div class="review-avatar">
+                                {{ review['username'][0]|upper }}
+                            </div>
+
+                            <div class="review-user-info">
+                                <h3>{{ review['username'] }}</h3>
+                                <p>{{ review['created_at'] }}</p>
+                            </div>
+                        </div>
+
+                        <div class="review-product">
+                            <span class="review-product-icon">
+                                {% if review['product_name'] == 'Wireless Headphones' %}
+                                    🎧
+                                {% elif review['product_name'] == 'Smart Watch' %}
+                                    ⌚
+                                {% else %}
+                                    🔊
+                                {% endif %}
+                            </span>
+
+                            <h2>{{ review['product_name'] }}</h2>
+                        </div>
+
+                        <div class="review-stars">
+                            {{ '★' * review['rating'] }}{{ '☆' * (5 - review['rating']) }}
+                            <span>{{ review['rating'] }}/5</span>
+                        </div>
+
+                        <p class="review-description">
+                            {{ review['review_text'] }}
+                        </p>
+
+                        <div class="review-card-footer">
+                            <span>💜 Shared on ReviewHub</span>
+                        </div>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <div class="panel empty-state">
+                    <span>💬</span>
+                    <h2>No Reviews Yet</h2>
+                    <p>Be the first to share your product experience!</p>
+                    <a href="{{ url_for('add_review') }}" class="btn btn-primary">
+                        Add First Review
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+        <div class="page-bottom-link">
+            <a href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 ReviewHub | Product Review System</p>
+    </footer>
+
+</body>
+</html>

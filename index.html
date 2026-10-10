@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Review System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-page">
+
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="brand">
+            ⭐ ReviewHub
+        </a>
+        <div class="nav-links">
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="hero-content">
+            <span class="eyebrow">✨ YOUR OPINION MATTERS</span>
+            <h1>Discover Products.<br>
+                <span class="gradient-text">Share Your Experience.</span>
+            </h1>
+            <p>
+                Explore product ratings, share honest reviews, and help
+                others make better choices with ReviewHub.
+            </p>
+
+            <div class="hero-actions">
+                <a href="{{ url_for('register') }}" class="btn btn-primary">
+                    Create Account →
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-light">
+                    Login
+                </a>
+            </div>
+
+            <div class="hero-points">
+                <span>⭐ Rate Products</span>
+                <span>💬 Share Reviews</span>
+                <span>📊 Explore Ratings</span>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="floating-card card-one">
+                <span class="product-icon">🎧</span>
+                <div>
+                    <strong>Wireless Headphones</strong>
+                    <p>⭐⭐⭐⭐⭐</p>
+                </div>
+            </div>
+
+            <div class="rating-card">
+                <div class="big-star">⭐</div>
+                <h2>Real Reviews</h2>
+                <p>Honest opinions. Better decisions.</p>
+                <div class="rating-stars">★★★★★</div>
+            </div>
+
+            <div class="floating-card card-two">
+                <span class="product-icon">⌚</span>
+                <div>
+                    <strong>Smart Watch</strong>
+                    <p>Discover and review</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="features">
+        <div class="section-heading">
+            <span class="eyebrow">WHY REVIEWHUB?</span>
+            <h2>Everything you need in one place</h2>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card purple">
+                <span class="feature-icon">⭐</span>
+                <h3>Rate Products</h3>
+                <p>Give products a rating from one to five stars.</p>
+            </div>
+
+            <div class="feature-card blue">
+                <span class="feature-icon">💬</span>
+                <h3>Write Reviews</h3>
+                <p>Share your experience and help other users.</p>
+            </div>
+
+            <div class="feature-card pink">
+                <span class="feature-icon">📊</span>
+                <h3>View Insights</h3>
+                <p>Explore product ratings and review statistics.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2026 ReviewHub | Product Review System</p>
+    </footer>
+
+</body>
+</html>
