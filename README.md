@@ -51,7 +51,7 @@ The Product Review System enables users to register, log in, explore products, s
 
 **1. Clone the repository**
 
-    git clone https://github.com/gowthamimurakonda2928/Product-Review-System.git
+    git clone https://github.com/naveenkumar2928/Product-Review-System.git
 
 **2. Navigate to the project directory**
 
