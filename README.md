@@ -71,6 +71,6 @@ The Product Review System enables users to register, log in, explore products, s
 
 ## Author
 
-**Gowthami Murakonda**
+**Naveen Kumar**
 
-GitHub: [gowthamimurakonda2928](https://github.com/gowthamimurakonda2928)
+GitHub: naveenkumar2928
